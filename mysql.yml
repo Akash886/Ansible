@@ -1,0 +1,40 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Install MYSQL
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Add a custom repository
+      apt_repository:
+        repo: 'deb http://repo.example.com/ubuntu focal main'
+        state: present
+
+    - name: Deploying code from Git repository
+      git:
+        repo: 'https://github.com/example/repo.git'
+        dest: /var/www/html
+        version: master
+
+    - name: Run a shell script
+      command: /path/to/script.sh
+
+  - name: Create a cron job to run a script everyday at midnight
+    cron:
+      name: "Run backup"
+      minute: '0'
+      hour: '0'
+      job: "/path/to/backup.sh"
+
+  - name: Backup MYSQL database
+    mysql_db:
+      name: aaditechnology
+      state: dump
+      target: /backup/aaditechnology.sql
+
+  - name: Restore MYSQL database
+    mysql_db:
+      name: aaditech
+      state: import
+      target: /backup/aaditechnology.sql
